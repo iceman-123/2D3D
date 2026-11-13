@@ -17,6 +17,16 @@ import { SettingsProvider } from "@/lib/settings";
 import { AuthProvider } from "@/hooks/use-auth";
 import { Toaster } from "@/components/ui/sonner";
 
+function usePwaRegister() {
+  useEffect(() => {
+    if (!("serviceWorker" in navigator)) return;
+
+    navigator.serviceWorker
+      .register("/sw.js")
+      .catch((error) => console.error("Service worker registration failed:", error));
+  }, []);
+}
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -83,15 +93,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "2D3D Live — တိုက်ရိုက် 2D / 3D ထွက်ဂဏန်း" },
       {
         name: "description",
-        content: "SET နှင့် Value မှ တိုက်ရိုက် 2D ဂဏန်း၊ ထွက်ဂဏန်းမှတ်တမ်းနှင့် 3D ရလဒ်များ",
+        content: "SET နှင့် Value မှ တိုက်ရိုက် 2D ဂဏန်း၊ ထွက်ဂဏန်းမှတ်တမ်းနှင့် 3D ရလဒ်မျာများ",
       },
       { name: "theme-color", content: "#2a1512" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-title", content: "2D3D Live" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { property: "og:title", content: "2D3D Live" },
       { property: "og:description", content: "တိုက်ရိုက် 2D / 3D ထွက်ဂဏန်းများ" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "application-name", content: "2D3D Live" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "msapplication-TileColor", content: "#2a1512" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -102,6 +116,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Noto+Sans+Myanmar:wght@400;500;600;700&display=swap",
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "manifest", href: "/manifest.json" },
+      { rel: "apple-touch-icon", href: "/icon-192.png" },
     ],
   }),
   shellComponent: RootShell,
@@ -126,6 +142,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  usePwaRegister();
 
   return (
     <QueryClientProvider client={queryClient}>
